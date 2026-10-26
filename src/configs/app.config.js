@@ -48,6 +48,30 @@ const config = convict({
   },
 
   db: {
+    dialect: {
+      doc: 'Database engine. sqlite needs nothing installed; postgres covers local Postgres, Docker, Supabase and any hosted Postgres.',
+      format: ['sqlite', 'postgres'],
+      default: 'sqlite',
+      env: 'DB_DIALECT'
+    },
+    storage: {
+      doc: 'SQLite database file (only used when DB_DIALECT=sqlite)',
+      format: String,
+      default: 'data/database.sqlite',
+      env: 'DB_STORAGE'
+    },
+    url: {
+      doc: 'Full Postgres connection string (Supabase, Neon, ...). When set, it replaces the DB_* host/user/password settings.',
+      format: '*',
+      default: '',
+      env: 'DATABASE_URL'
+    },
+    ssl: {
+      doc: 'Connect to Postgres over SSL (required by Supabase and most hosted Postgres)',
+      format: Boolean,
+      default: false,
+      env: 'DB_SSL'
+    },
     name: {
       doc: 'Database Name',
       format: String,
@@ -86,7 +110,15 @@ const config = convict({
     }
   },
 
+  // Redis is optional: leave REDIS_URL and REDIS_DB_HOST empty to run without
+  // it (sockets and rate limits then live in this one process's memory).
   redis_db: {
+    url: {
+      doc: 'Full Redis connection string, e.g. rediss://... from Upstash. Takes precedence over host/port/password.',
+      format: '*',
+      default: '',
+      env: 'REDIS_URL'
+    },
     password: {
       doc: 'Redis Database password',
       format: '*',
@@ -94,9 +126,9 @@ const config = convict({
       env: 'REDIS_DB_PASSWORD'
     },
     host: {
-      doc: 'Redis DB host',
+      doc: 'Redis DB host (empty = Redis disabled unless REDIS_URL is set)',
       format: String,
-      default: '127.0.0.1',
+      default: '',
       env: 'REDIS_DB_HOST'
     },
     port: {

@@ -82,6 +82,10 @@ class Logger {
     this.#log('debug', logTitle, argHash)
   }
 
+  static warn (logTitle, argHash = {}) {
+    this.#log('warn', logTitle, argHash)
+  }
+
   static error (logTitle, argHash = {}) {
     this.#log('error', logTitle, argHash)
   }

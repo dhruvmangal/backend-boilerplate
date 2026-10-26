@@ -6,14 +6,16 @@ import '~/json-schemas'
 
 // Avoid real network connections in unit tests — nothing here needs a live
 // Redis, and ioredis's auto-retry would otherwise keep the process (and
-// Jest) alive after the tests finish.
+// Jest) alive after the tests finish. `enabled: false` makes the app use
+// its in-memory fallbacks, whatever your local .env says.
 jest.mock('~/libs/redisClient', () => ({
   __esModule: true,
   default: {
+    enabled: false,
     connection: {},
-    publisherClient: { on: jest.fn(), status: 'ready' },
-    subscriberClient: { on: jest.fn(), status: 'ready' },
-    client: { call: jest.fn(), status: 'ready' }
+    publisherClient: null,
+    subscriberClient: null,
+    client: null
   }
 }))
 

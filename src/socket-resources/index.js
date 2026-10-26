@@ -41,7 +41,10 @@ socketServer.on('new_namespace', (namespace) => {
   })
 })
 
-socketServer.adapter(createAdapter(redisClient.publisherClient, redisClient.subscriberClient))
+// Without Redis, Socket.io's default in-memory adapter is used (single instance only).
+if (redisClient.enabled) {
+  socketServer.adapter(createAdapter(redisClient.publisherClient, redisClient.subscriberClient))
+}
 
 namespaces(socketServer)
 
