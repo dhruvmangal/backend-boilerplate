@@ -20,7 +20,6 @@ import path from 'node:path'
 import {
   CONFIG_FILE,
   DATABASES,
-  DEFAULTS,
   REDIS_OPTIONS,
   ROOT,
   checkDatabase,
@@ -98,12 +97,12 @@ const validUrl = (prefixes, example) => (value) =>
 async function askQuestions (current, env) {
   const name = stopIfCancelled(
     await p.text({
-      message: 'What is your app called?',
-      placeholder: DEFAULTS.name,
-      initialValue: current.name,
-      validate: (value) => ((value || '').trim() ? undefined : 'Give your app a name (you can change it later)')
+      message: 'What is your app called? (press Enter to keep the grey name)',
+      // A placeholder, not an initialValue: typing replaces it instead of appending to it.
+      placeholder: current.name,
+      defaultValue: current.name
     })
-  ).trim()
+  ).trim() || current.name
 
   const mode = stopIfCancelled(
     await p.select({
