@@ -1,6 +1,7 @@
 import rateLimit from 'express-rate-limit'
 import { RedisStore } from 'rate-limit-redis'
 import redisClient from '~/libs/redisClient'
+import Logger from '~/libs/logger'
 import config from '~/configs/app.config'
 
 /**
@@ -14,6 +15,8 @@ import config from '~/configs/app.config'
  * Note: if you opt into the Redis-backed store, a Redis outage will queue
  * (not fail) commands by default under ioredis's offline queue — make sure
  * your Redis is actually reachable in any environment where you enable it.
+ * With Redis not configured at all, `distributed` falls back to the
+ * in-memory store (with a warning) instead of failing to start.
  *
  * @example
  * router.post('/otp', rateLimiter({ max: 5 }), OtpController.send)
@@ -32,7 +35,9 @@ export default function rateLimiter ({
     message: { data: {}, errors: [{ name: 'RateLimited', description: message }] }
   }
 
-  if (distributed) {
+  if (distributed && !redisClient.enabled) {
+    Logger.warn('RateLimiter', { message: 'distributed rate limiting needs Redis (REDIS_URL / REDIS_DB_HOST); using the in-memory store instead.' })
+  } else if (distributed) {
     options.store = new RedisStore({
       sendCommand: (...args) => redisClient.client.call(...args)
     })

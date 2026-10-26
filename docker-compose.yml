@@ -4,11 +4,11 @@
 #   docker compose up -d postgres redis   # just the datastores, run the app with `npm run start:dev` on your host
 #   docker compose up                     # everything, including the app, in containers
 #
+# `npm run setup` (pick "Postgres in Docker") does the first form for you.
 # Either way, first `cp .env.sample .env` — this file expects DB/Redis host
 # values of `postgres`/`redis` when the app itself runs in Docker (override
 # them in your shell, or a docker-compose.override.yml, if you run the app
 # on your host against these containers instead).
-version: '3.8'
 
 services:
   postgres:
@@ -50,6 +50,9 @@ services:
     env_file:
       - .env
     environment:
+      DB_DIALECT: postgres
+      DATABASE_URL: ''
+      DB_SSL: 'false'
       DB_READ_HOST: postgres
       DB_WRITE_HOST: postgres
       REDIS_DB_HOST: redis

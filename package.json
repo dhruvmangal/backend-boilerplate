@@ -1,7 +1,7 @@
 {
   "name": "backend-boilerplate",
   "version": "1.0.0",
-  "description": "Scalable Node.js boilerplate: Express + Socket.io + Sequelize (Postgres) + Redis, with a layered service architecture",
+  "description": "Scalable Node.js boilerplate: Express + Socket.io + Sequelize (SQLite or Postgres) + optional Redis, with a layered service architecture",
   "main": "index.js",
   "scripts": {
     "prepare": "husky install",
@@ -10,11 +10,15 @@
     "lint": "standard --fix",
     "start:dev": "nodemon --exec npm run babel-node -- ./index.js",
     "test": "jest",
-    "sequelize": "npm run babel-node node_modules/.bin/sequelize-cli",
+    "sequelize": "babel-node node_modules/sequelize-cli/lib/sequelize",
     "build": "make build",
     "test:watch": "jest --watch",
     "lint:ci": "standard",
-    "generate": "plop"
+    "generate": "plop",
+    "db:migrate": "npm run sequelize -- db:migrate",
+    "db:seed": "npm run sequelize -- db:seed:all",
+    "setup": "npm install --no-audit --no-fund && node scripts/setup.mjs",
+    "doctor": "node scripts/doctor.mjs"
   },
   "husky": {
     "hooks": {
@@ -67,6 +71,7 @@
     "@babel/eslint-parser": "^7.25.9",
     "@babel/node": "^7.25.9",
     "@babel/preset-env": "^7.26.0",
+    "@clack/prompts": "^1.8.1",
     "babel-jest": "^29.7.0",
     "babel-plugin-module-resolver": "^5.0.2",
     "dotenv": "^16.4.5",
@@ -97,5 +102,11 @@
     "moduleNameMapper": {
       "^~/(.*)$": "<rootDir>/src/$1"
     }
+  },
+  "optionalDependencies": {
+    "sqlite3": "^5.1.7"
+  },
+  "allowScripts": {
+    "sqlite3": true
   }
 }

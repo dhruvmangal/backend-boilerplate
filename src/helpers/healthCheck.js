@@ -15,7 +15,9 @@ export default async () => {
   }
 
   try {
-    if (redisClient.publisherClient.status === 'ready' && redisClient.subscriberClient.status === 'ready') {
+    if (!redisClient.enabled) {
+      Logger.info('HealthCheck', { message: 'Redis Connection: disabled (no REDIS_URL / REDIS_DB_HOST configured).' })
+    } else if (redisClient.publisherClient.status === 'ready' && redisClient.subscriberClient.status === 'ready') {
       Logger.info('HealthCheck', { message: 'Redis Connection: has been established successfully.' })
     } else {
       healthy = false

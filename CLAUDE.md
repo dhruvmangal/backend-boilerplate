@@ -68,6 +68,12 @@ are for server-initiated pushes outside a request/response cycle.
   for anything sensitive (auth, OTP, payment-adjacent). Never set
   `distributed: true` unless Redis is actually guaranteed reachable in that
   environment — see the comment in `rateLimiter.middleware.js`.
+- **Database and Redis are configurable**: `DB_DIALECT` is `sqlite` (default)
+  or `postgres` (host-based, or `DATABASE_URL` for Supabase/Neon), so keep
+  migrations and queries portable (no JSONB/arrays/`iLike` without a
+  dialect check). Redis is optional: anything using `~/libs/redisClient`
+  must check `redisClient.enabled` and fall back to in-process behaviour.
+  `npm run setup` / `npm run doctor` (`scripts/`) write and verify `.env`.
 - **Logging**: use `context.logger` / `this.log` (inside a service), never
   `console.log`. Use `Logger.error(...)` with the `exception`/`fault` keys
   so stack traces and validation failures are structured, not string-concatenated.
